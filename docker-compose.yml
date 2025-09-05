@@ -1,0 +1,70 @@
+# Docker Compose configuration for Realtime Messenger
+# Usage: docker-compose up
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  db:
+    image: postgres:15-alpine
+    container_name: realtime-messenger-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: realtime_messenger
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password123
+    ports:
+      - "5432:5432"
+    volumes:
+      # Persist database data between container restarts
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # Backend API Server
+  backend:
+    build:
+      context: ./packages/backend
+      dockerfile: Dockerfile
+    container_name: realtime-messenger-backend
+    restart: unless-stopped
+    ports:
+      - "4000:4000"
+    environment:
+      # Docker environment - connects to 'db' service
+      DATABASE_URL: "postgresql://postgres:password123@db:5432/realtime_messenger"
+      JWT_SECRET: "docker-development-jwt-secret-change-in-production"
+      PORT: 4000
+      NODE_ENV: development
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      # Mount source code for development (hot reload)
+      - ./packages/backend/src:/app/src:ro
+      - ./packages/backend/prisma:/app/prisma:ro
+
+  # Frontend React App
+  frontend:
+    build:
+      context: ./packages/frontend
+      dockerfile: Dockerfile
+    container_name: realtime-messenger-frontend
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      # Frontend environment variables
+      VITE_API_URL: http://localhost:4000
+    depends_on:
+      - backend
+    volumes:
+      # Mount source code for development (hot reload)
+      - ./packages/frontend/src:/app/src:ro
+
+volumes:
+  # Persistent volume for PostgreSQL data
+  postgres_data:
+    driver: local

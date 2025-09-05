@@ -1,0 +1,52 @@
+{
+  "compilerOptions": {
+    /* Language and Environment */
+    "target": "ES2020",                         // Modern browser support
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],  // Include browser APIs
+    "module": "ESNext",                         // Use latest ES modules
+    "moduleResolution": "bundler",              // Use bundler module resolution (Vite)
+    "allowImportingTsExtensions": true,         // Allow importing .ts files
+    
+    /* React JSX */
+    "jsx": "react-jsx",                         // Use React 17+ JSX transform
+    "jsxImportSource": "react",                 // Set React as JSX import source
+    
+    /* Type Checking */
+    "strict": true,                             // Enable all strict type checking
+    "noImplicitReturns": true,                 // Error when function doesn't return
+    "noFallthroughCasesInSwitch": true,        // Error on fallthrough switch cases
+    "noUncheckedIndexedAccess": true,          // Add undefined to index access
+    "exactOptionalPropertyTypes": true,         // Strict optional property types
+    
+    /* Bundler Compatibility */
+    "allowSyntheticDefaultImports": true,       // Allow synthetic default imports
+    "esModuleInterop": true,                    // Enable CommonJS/ES module interop
+    "isolatedModules": true,                    // Ensure each file can be transpiled alone
+    "skipLibCheck": true,                       // Skip type checking of .d.ts files
+    
+    /* Path Resolution */
+    "baseUrl": ".",                            // Base directory for relative imports
+    "paths": {
+      "@/*": ["./src/*"]                       // Allow @/ imports for src folder
+    },
+    
+    /* Emit */
+    "noEmit": true,                            // Don't emit files (Vite handles this)
+    "declaration": false,                       // No need for .d.ts files in frontend
+    "sourceMap": true,                          // Generate source maps for debugging
+    
+    /* Interop and Compatibility */
+    "forceConsistentCasingInFileNames": true,   // Ensure correct file name casing
+    "resolveJsonModule": true                   // Allow importing JSON files
+  },
+  "include": [
+    "src/**/*",                                 // Include all source files
+    "vite.config.ts"                           // Include Vite config
+  ],
+  "exclude": [
+    "node_modules",                            // Exclude dependencies
+    "dist",                                    // Exclude build output
+    "**/*.test.ts",                            // Exclude test files
+    "**/*.test.tsx"
+  ]
+}

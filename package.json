@@ -1,0 +1,24 @@
+{
+  "name": "realtime-messenger",
+  "version": "1.0.0",
+  "description": "A real-time messaging application built with React, TypeScript, tRPC, and PostgreSQL",
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "dev:backend": "npm run dev --workspace=packages/backend",
+    "dev:frontend": "npm run dev --workspace=packages/frontend",
+    "build": "npm run build --workspace=packages/backend && npm run build --workspace=packages/frontend",
+    "type-check": "npm run type-check --workspace=packages/backend && npm run type-check --workspace=packages/frontend"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2",
+    "typescript": "^5.3.3"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  }
+}

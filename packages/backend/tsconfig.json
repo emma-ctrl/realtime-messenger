@@ -1,0 +1,46 @@
+{
+  "compilerOptions": {
+    /* Language and Environment */
+    "target": "ES2022",                          // Use modern JavaScript features
+    "module": "NodeNext",                        // ESM modules with Node.js compatibility
+    "moduleResolution": "NodeNext",              // Resolve modules using Node.js ESM rules
+    "lib": ["ES2022"],                          // Include ES2022 standard library
+    
+    /* Type Checking */
+    "strict": true,                             // Enable all strict type checking options
+    "exactOptionalPropertyTypes": true,         // Require exact types for optional properties
+    "noImplicitReturns": true,                 // Error when function doesn't return a value
+    "noFallthroughCasesInSwitch": true,        // Error on fallthrough switch cases
+    "noUncheckedIndexedAccess": true,          // Add undefined to index signature results
+    
+    /* Modules */
+    "allowSyntheticDefaultImports": true,       // Allow default imports from modules without default export
+    "esModuleInterop": true,                    // Enable interop between CommonJS and ES modules
+    "forceConsistentCasingInFileNames": true,   // Ensure correct casing in imports
+    "resolveJsonModule": true,                  // Allow importing JSON files
+    
+    /* Emit */
+    "outDir": "./dist",                         // Output directory for compiled files
+    "rootDir": "./src",                         // Root directory for source files
+    "declaration": true,                        // Generate .d.ts declaration files
+    "declarationMap": true,                     // Generate source maps for declarations
+    "sourceMap": true,                          // Generate source maps for debugging
+    "removeComments": false,                    // Keep comments in output (helpful for debugging)
+    
+    /* Interop Constraints */
+    "isolatedModules": true,                    // Ensure each file can be transpiled independently
+    "allowSyntheticDefaultImports": true,       // Allow synthetic default imports
+    "skipLibCheck": true                        // Skip type checking of declaration files (faster builds)
+  },
+  "include": [
+    "src/**/*"                                  // Include all files in src directory
+  ],
+  "exclude": [
+    "node_modules",                             // Exclude dependencies
+    "dist",                                     // Exclude build output
+    "**/*.test.ts"                              // Exclude test files from compilation
+  ],
+  "ts-node": {
+    "esm": true                                 // Enable ESM support in ts-node
+  }
+}

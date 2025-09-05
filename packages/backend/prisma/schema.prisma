@@ -1,0 +1,70 @@
+// This is your Prisma schema file.
+// Learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Users table - stores authentication and user info
+model User {
+  id        Int      @id @default(autoincrement())
+  username  String   @unique @db.VarChar(50)
+  password  String   @db.VarChar(255) // Will store bcrypt hashed passwords
+  createdAt DateTime @default(now()) @map("created_at")
+
+  // Relationships
+  sentMessages      Message[]           @relation("MessageSender")
+  threadParticipants ThreadParticipant[]
+
+  @@map("users")
+}
+
+// Threads table - represents conversations (DMs or future group chats)
+model Thread {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  // Relationships
+  messages     Message[]
+  participants ThreadParticipant[]
+
+  @@map("threads")
+}
+
+// Thread participants - many-to-many relationship between users and threads
+model ThreadParticipant {
+  threadId Int      @map("thread_id")
+  userId   Int      @map("user_id")
+  joinedAt DateTime @default(now()) @map("joined_at")
+
+  // Relationships
+  thread Thread @relation(fields: [threadId], references: [id], onDelete: Cascade)
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Composite primary key - a user can only be in a thread once
+  @@id([threadId, userId])
+  @@map("thread_participants")
+}
+
+// Messages table - stores all chat messages
+model Message {
+  id        Int      @id @default(autoincrement())
+  threadId  Int      @map("thread_id")
+  senderId  Int      @map("sender_id")
+  content   String   @db.Text // Unlimited message length
+  createdAt DateTime @default(now()) @map("created_at")
+
+  // Relationships
+  thread Thread @relation(fields: [threadId], references: [id], onDelete: Cascade)
+  sender User   @relation("MessageSender", fields: [senderId], references: [id], onDelete: Cascade)
+
+  // Index for fast message retrieval by thread
+  @@index([threadId, createdAt])
+  @@map("messages")
+}
