@@ -55,8 +55,8 @@ async function testDatabase() {
     const testMessage = await prisma.message.create({
       data: {
         content: 'Test message from manual verification script!',
-        senderId: users[1].id, // Bob
-        threadId: threadsWithParticipants[0].id,
+        senderId: users[1]?.id || 0,
+        threadId: threadsWithParticipants[0]?.id || 0,
       },
       include: {
         sender: { select: { username: true } }

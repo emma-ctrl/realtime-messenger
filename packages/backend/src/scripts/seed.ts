@@ -1,6 +1,6 @@
 /**
  * Database Seeder - Creates hardcoded users for development
- * Run with: npm run db:seed
+ * Run with: npm run db:seed --workspace=packages/backend
  */
 
 import { PrismaClient } from '@prisma/client'

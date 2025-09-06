@@ -1,20 +1,24 @@
-# Backend Dockerfile - Node.js API Server
+# Backend Dockerfile - Node.js API Server (Monorepo)
 FROM node:18-alpine
 
-# Install curl for health checks
-RUN apk add --no-cache curl
+# Install curl and openssl for health checks and Prisma
+RUN apk add --no-cache curl openssl
 
 # Set working directory inside container
 WORKDIR /app
 
-# Copy package.json files for dependency installation
+# Copy root workspace files first
 COPY package*.json ./
+COPY packages/backend/package.json ./packages/backend/
 
-# Install all dependencies (including dev dependencies for tsx)
-RUN npm ci
+# Install all workspace dependencies from root
+RUN npm install
 
-# Copy application source code
-COPY . .
+# Copy backend source code
+COPY packages/backend/ ./packages/backend/
+
+# Set working directory to backend package
+WORKDIR /app/packages/backend
 
 # Generate Prisma client
 RUN npx prisma generate
