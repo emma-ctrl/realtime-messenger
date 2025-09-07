@@ -55,7 +55,8 @@ export function useSocket({ user }: UseSocketProps) {
     console.log(`🔌 Connecting to Socket.io as ${user.username}...`);
 
     // Create connection with auth
-    const socket = io('http://localhost:4000', {
+    const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
+    const socket = io(API_URL, {
       withCredentials: true,
       auth: { token },
       transports: ['websocket', 'polling']

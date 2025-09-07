@@ -51,6 +51,9 @@ export const threadsRouter = router({
             some: {
               userId: userId // Find threads where current user is a participant
             }
+          },
+          messages: {
+            some: {} // Only return threads that have at least one message
           }
         },
         include: {

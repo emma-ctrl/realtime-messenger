@@ -1,7 +1,9 @@
 # realtime-messenger
 A real-time messaging application built with React, TypeScript, tRPC, and PostgreSQL. Features instant messaging, thread-based conversations, and WebSocket communication.
 
-## 🚀 Quick Start with Docker
+##  Quick Start with Docker (Recommended)
+
+The easiest way to get started! Docker handles database setup, migrations, and seeding automatically.
 
 **Prerequisites:** Docker and Docker Compose installed
 
@@ -10,7 +12,7 @@ A real-time messaging application built with React, TypeScript, tRPC, and Postgr
 git clone <repository-url>
 cd realtime-messenger
 
-# Start all services
+# Start all services (includes database setup)
 docker-compose up
 
 # Access the application
@@ -22,7 +24,9 @@ docker-compose up
 - Username: `alice`, `bob`, `charlie`  
 - Password: `password123`
 
-## 🛠️ Local Development Setup
+## Local Development Setup (Alternative)
+
+For developers who prefer running services locally without Docker.
 
 **Prerequisites:** Node.js >= 18, PostgreSQL
 
@@ -42,3 +46,5 @@ npm run db:seed
 # Start development servers
 npm run dev  # Starts both frontend and backend
 ```
+
+**Note:** Local setup requires manual PostgreSQL installation and configuration. Docker setup is recommended for simplicity.
