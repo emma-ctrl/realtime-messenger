@@ -1,6 +1,14 @@
 # realtime-messenger
 A real-time messaging application built with React, TypeScript, tRPC, and PostgreSQL. Features instant messaging, thread-based conversations, and WebSocket communication.
 
+## Demo 
+
+
+
+https://github.com/user-attachments/assets/7b1e269b-c511-46de-b3a1-337f5792cf99
+
+
+
 ##  Quick Start with Docker (Recommended)
 
 The easiest way to get started! Docker handles database setup, migrations, and seeding automatically.
