@@ -9,7 +9,7 @@ The easiest way to get started! Docker handles database setup, migrations, and s
 
 ```bash
 # Clone the repository
-git clone <repository-url>
+git clone https://github.com/emma-ctrl/realtime-messenger.git
 cd realtime-messenger
 
 # Start all services (includes database setup)
