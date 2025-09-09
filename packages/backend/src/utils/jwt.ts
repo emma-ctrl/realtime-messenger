@@ -1,26 +1,8 @@
-/**
- * JWT Authentication Utilities
- * 
- * This module handles all JWT operations including:
- * - Token generation with user payload
- * - Token verification and decoding
- * - Secure cookie configuration
- * 
- * Security Features:
- * - Short token expiration (2 hours)
- * - Strong secret key requirement
- * - httpOnly cookies to prevent XSS
- * - Comprehensive error handling
- */
-
 import jwt from 'jsonwebtoken';
 import type { AuthUser } from '@shared/types.js';
 
-// JWT Configuration
 const JWT_SECRET = process.env.JWT_SECRET || 'your-super-secret-jwt-key-change-this-in-production';
-const JWT_EXPIRES_IN = '2h'; // Short expiration for security
-
-// JWT Payload Interface
+const JWT_EXPIRES_IN = '2h';
 interface JWTPayload {
   userId: number;
   username: string;

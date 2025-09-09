@@ -1,18 +1,3 @@
-/**
- * Authentication Router - Login/Logout Procedures
- * 
- * This router handles user authentication operations:
- * - Login with username/password
- * - Logout (clear JWT cookie)
- * - Get current user profile
- * 
- * AUTHENTICATION STRATEGY:
- * - Users stored in database (seeded via npm run db:seed)
- * - bcrypt for password hashing
- * - JWT tokens in httpOnly cookies
- * - Type-safe input validation with Zod
- */
-
 import { z } from 'zod';
 import bcrypt from 'bcryptjs';
 import { TRPCError } from '@trpc/server';
@@ -20,7 +5,6 @@ import { publicProcedure, protectedProcedure, router } from '../trpc.js';
 import { generateToken, JWT_COOKIE_OPTIONS } from '../../utils/jwt.js';
 import type { LoginResponse, AuthUser } from '@shared/types.js';
 
-// Input validation schemas
 const loginSchema = z.object({
   username: z.string()
     .min(1, 'Username is required')
@@ -31,42 +15,18 @@ const loginSchema = z.object({
 });
 
 export const authRouter = router({
-  /**
-   * Login Procedure - Authenticate User
-   * 
-   * FLOW:
-   * 1. Validate input (username/password format)
-   * 2. Query database for user by username
-   * 3. Compare password using bcrypt
-   * 4. Generate JWT token
-   * 5. Set httpOnly cookie
-   * 6. Return user data (without password)
-   * 
-   * SECURITY FEATURES:
-   * - Input sanitization via Zod
-   * - Secure password comparison with bcrypt
-   * - httpOnly cookies prevent XSS
-   * - Database lookup prevents timing attacks
-   * 
-   * AVAILABLE USERS (from seed script):
-   * - alice / password123
-   * - bob / password123
-   * - charlie / password123
-   */
   login: publicProcedure
     .input(loginSchema)
     .mutation(async ({ input, ctx }): Promise<LoginResponse> => {
       const { username, password } = input;
-
       console.log(`🔐 Login attempt for username: ${username}`);
 
-      // Find user in database by username
       const user = await ctx.prisma.user.findUnique({
         where: { username },
         select: {
           id: true,
           username: true,
-          password: true, // Need password hash for comparison
+          password: true,
         },
       });
       

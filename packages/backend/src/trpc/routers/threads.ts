@@ -1,24 +1,7 @@
-/**
- * Thread Management Router - Handles conversation operations
- * 
- * This router manages the creation and retrieval of conversation threads.
- * In our messaging app, a "thread" represents a conversation between users.
- * 
- * KEY CONCEPTS:
- * - Thread: A conversation container (like a chat room)
- * - Participants: Users who are part of the conversation
- * - DM (Direct Message): A thread with exactly 2 participants
- * 
- * DATABASE RELATIONSHIPS:
- * User ←→ ThreadParticipants ←→ Thread ←→ Messages
- *  1:N         N:N             1:N       1:N
- */
-
 import { z } from 'zod';
 import { TRPCError } from '@trpc/server';
 import { router, protectedProcedure } from '../trpc.js';
 
-// Input validation schemas
 const createThreadSchema = z.object({
   targetUsername: z.string()
     .min(1, 'Username is required')
@@ -26,65 +9,39 @@ const createThreadSchema = z.object({
 });
 
 export const threadsRouter = router({
-  /**
-   * Get User Threads - Retrieve all conversations for current user
-   * 
-   * BUSINESS LOGIC:
-   * 1. Find all threads where current user is a participant
-   * 2. Include other participant information (for DMs)
-   * 3. Include last message preview
-   * 4. Order by most recent activity
-   * 
-   * SECURITY:
-   * - Only returns threads user has access to (via participant relationship)
-   * - Uses protectedProcedure to ensure user is authenticated
-   */
   getUserThreads: protectedProcedure
     .query(async ({ ctx }) => {
       const userId = ctx.user.id;
-      
       console.log(`📋 Fetching threads for user: ${ctx.user.username} (ID: ${userId})`);
 
       const threads = await ctx.prisma.thread.findMany({
         where: {
           participants: {
-            some: {
-              userId: userId // Find threads where current user is a participant
-            }
+            some: { userId: userId }
           },
           messages: {
-            some: {} // Only return threads that have at least one message
+            some: {} // Only return threads that have messages
           }
         },
         include: {
           participants: {
             include: {
               user: {
-                select: {
-                  id: true,
-                  username: true,
-                }
+                select: { id: true, username: true }
               }
             }
           },
           messages: {
-            take: 1, // Get only the last message
-            orderBy: {
-              createdAt: 'desc'
-            },
+            take: 1,
+            orderBy: { createdAt: 'desc' },
             include: {
               sender: {
-                select: {
-                  id: true,
-                  username: true,
-                }
+                select: { id: true, username: true }
               }
             }
           }
         },
-        orderBy: {
-          updatedAt: 'desc' // Most recently active threads first
-        }
+        orderBy: { updatedAt: 'desc' }
       });
 
       // Transform the data for frontend consumption
@@ -125,28 +82,13 @@ export const threadsRouter = router({
       return threadsWithMetadata;
     }),
 
-  /**
-   * Create Thread - Start new conversation with another user
-   * 
-   * BUSINESS LOGIC:
-   * 1. Validate target user exists
-   * 2. Check if thread already exists between these users
-   * 3. If not, create new thread and add both users as participants
-   * 4. Return the new thread data
-   * 
-   * DUPLICATE PREVENTION:
-   * - For DMs, we prevent multiple threads between same 2 users
-   * - This keeps the UX clean (one conversation per user pair)
-   */
   createThread: protectedProcedure
     .input(createThreadSchema)
     .mutation(async ({ input, ctx }) => {
       const { targetUsername } = input;
       const currentUserId = ctx.user.id;
-
       console.log(`💬 Creating thread: ${ctx.user.username} → ${targetUsername}`);
 
-      // Step 1: Validate target user exists
       const targetUser = await ctx.prisma.user.findUnique({
         where: { username: targetUsername },
         select: { id: true, username: true }
@@ -160,7 +102,6 @@ export const threadsRouter = router({
         });
       }
 
-      // Step 2: Prevent user from creating thread with themselves
       if (targetUser.id === currentUserId) {
         throw new TRPCError({
           code: 'BAD_REQUEST',
@@ -168,7 +109,7 @@ export const threadsRouter = router({
         });
       }
 
-      // Step 3: Check if thread already exists between these users
+      // Check if thread already exists to prevent duplicates
       const existingThread = await ctx.prisma.thread.findFirst({
         where: {
           AND: [
@@ -184,8 +125,6 @@ export const threadsRouter = router({
             },
             {
               participants: {
-                // Ensure it's exactly 2 participants (DM only)
-                // This prevents matching group chats that include both users
                 every: {
                   userId: { in: [currentUserId, targetUser.id] }
                 }
@@ -263,31 +202,3 @@ export const threadsRouter = router({
     }),
 });
 
-/**
- * ARCHITECTURE NOTES:
- * 
- * 1. 🔐 SECURITY:
- *    - All procedures use protectedProcedure (authentication required)
- *    - Users can only see threads they participate in
- *    - Input validation with Zod schemas
- * 
- * 2. 📊 DATA MODELING:
- *    - Threads are containers for conversations
- *    - ThreadParticipants creates many-to-many relationship
- *    - This design scales to group chats (3+ participants)
- * 
- * 3. 🎯 BUSINESS LOGIC:
- *    - Duplicate prevention for DMs
- *    - Last message preview for thread list
- *    - Sorted by most recent activity
- * 
- * 4. 🚀 PERFORMANCE:
- *    - Efficient Prisma queries with includes
- *    - Minimal data transfer (only needed fields)
- *    - Database-level ordering and filtering
- * 
- * NEXT STEPS:
- * - Add this router to main router configuration
- * - Create message router for sending/receiving messages
- * - Add real-time updates via Socket.io
- */
