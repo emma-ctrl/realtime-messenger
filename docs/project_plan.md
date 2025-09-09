@@ -1,13 +1,13 @@
 # Realtime Messenger - Project Plan
 
-## 📋 Project Overview
+## Project Overview
 
 Building a real-time messaging application similar to WhatsApp/Facebook Messenger with the following requirements:
 - **Time Constraint**: 4-6 hours maximum
 - **Focus**: Code quality and functionality over design
 - **Tech Stack**: React + TypeScript + Node.js + PostgreSQL
 
-## 🎯 Core Requirements
+## Core Requirements
 
 ### 1. Login Page
 - Username and password authentication
@@ -22,7 +22,7 @@ Building a real-time messaging application similar to WhatsApp/Facebook Messenge
 ### 3. Documentation
 - README with setup and run instructions
 
-## 🏗️ Architecture Decisions
+## Architecture Decisions
 
 ### Backend: Node.js + TypeScript
 **Why Node.js over Python:**
@@ -54,21 +54,21 @@ Building a real-time messaging application similar to WhatsApp/Facebook Messenge
 
 ### Real-time: Socket.io
 **Why Socket.io over alternatives:**
-- ✅ **Automatic fallbacks**: WebSocket → Long Polling → Regular Polling
+- **Automatic fallbacks**: WebSocket → Long Polling → Regular Polling
   - Corporate networks that block WebSockets
   - Spotty mobile connections
   - Network switching (WiFi → Mobile data)
-- ✅ **Built-in features**: Rooms, namespaces, reconnection handling
-- ✅ **Industry standard** for chat applications
-- ✅ **Event-based architecture** for clean message handling
+- **Built-in features**: Rooms, namespaces, reconnection handling
+- **Industry standard** for chat applications
+- **Event-based architecture** for clean message handling
 
 ### Frontend Build Tool: Vite
 **Why Vite over alternatives:**
-- ⚡ **Lightning-fast dev server**: ESM-native, no bundling in dev mode
-- 🔥 **Instant HMR**: Updates in <50ms vs 1-3s with Webpack
-- 📦 **Zero config TypeScript**: Works out of the box
-- 🎯 **Perfect for 4-6 hour constraint**: Minimal setup overhead
-- 🔧 **Built-in optimizations**: Tree shaking, code splitting, asset optimization
+- **Lightning-fast dev server**: ESM-native, no bundling in dev mode
+- **Instant HMR**: Updates in <50ms vs 1-3s with Webpack
+- **Zero config TypeScript**: Works out of the box
+- **Perfect for 4-6 hour constraint**: Minimal setup overhead
+- **Built-in optimizations**: Tree shaking, code splitting, asset optimization
 
 **Create React App (Rejected):**
 - Slow Webpack dev server, configuration complexity
@@ -79,7 +79,7 @@ Building a real-time messaging application similar to WhatsApp/Facebook Messenge
 **Raw Webpack (Rejected):**
 - Hours of setup time, slow builds, maintenance overhead
 
-## 🗄️ Database Schema
+## Database Schema
 
 ```sql
 -- Users table
@@ -116,10 +116,10 @@ CREATE TABLE messages (
 ```
 
 ### Schema Benefits
-- ✅ **Scalable**: Supports both DMs (2 users) and future group chats (3+ users)
-- ✅ **Performant**: Proper indexing and relationships
-- ✅ **Extensible**: Easy to add thread names, metadata, etc.
-- ✅ **Clean queries**: Simple JOIN operations
+- **Scalable**: Supports both DMs (2 users) and future group chats (3+ users)
+- **Performant**: Proper indexing and relationships
+- **Extensible**: Easy to add thread names, metadata, etc.
+- **Clean queries**: Simple JOIN operations
 
 ### Alternative Schemas Rejected
 1. **Direct user-to-user messages**: Complex conversation queries, no group support
@@ -127,7 +127,7 @@ CREATE TABLE messages (
 3. **No threads table**: Missing metadata, orphaned IDs
 4. **Over-engineered conversations**: Feature creep, time constraints
 
-## 🚀 Tech Stack Summary
+## Tech Stack Summary
 
 ```
 Frontend: React + TypeScript + Tailwind + tRPC Client + Socket.io Client
@@ -174,7 +174,7 @@ res.cookie('auth-token', token, {
 // Validation in both tRPC and Socket.io
 ```
 
-## 📅 Development Timeline (4-6 hours)
+## Development Timeline (4-6 hours)
 
 ### Phase 1: Setup & Foundation (45 minutes)
 - [ ] Initialize repositories (frontend/backend)
@@ -219,7 +219,7 @@ res.cookie('auth-token', token, {
 - [ ] README documentation
 - [ ] Final testing
 
-## 🎯 Implementation Priorities
+## Implementation Priorities
 
 ### Must Have (Core Requirements)
 1. User login with hardcoded credentials
@@ -242,7 +242,7 @@ res.cookie('auth-token', token, {
 4. File attachments
 5. Push notifications
 
-## 🔧 Key Implementation Details
+## Key Implementation Details
 
 ### Socket.io Room Structure
 ```javascript
@@ -267,7 +267,7 @@ io.to(`thread_${threadId}`).emit('new_message', message);
 5. Verify JWT for all protected operations
 ```
 
-## 📝 Success Criteria
+## Success Criteria
 
 ### Technical Requirements Met
 - [x] Real-time messaging without page refresh
@@ -283,7 +283,7 @@ io.to(`thread_${threadId}`).emit('new_message', message);
 - [x] Proper separation of concerns
 - [x] Documented setup process
 
-## 🚨 Risk Mitigation
+## Risk Mitigation
 
 ## Risk Mitigation
 
@@ -302,7 +302,7 @@ io.to(`thread_${threadId}`).emit('new_message', message);
 - No fancy UI/design work
 - Document what would be added with more time
 
-## 📚 Additional Resources
+## Additional Resources
 
 - [Socket.io Documentation](https://socket.io/docs/)
 - [tRPC Documentation](https://trpc.io/docs/)

@@ -82,8 +82,16 @@ export function ChatInterface({ thread, currentUser, onBackToThreadList }: ChatI
     onSuccess: (sentMessage) => {
       console.log('✅ Message sent successfully:', sentMessage);
       
-      // Add to local state
-      setMessages(prev => [...prev, sentMessage]);
+      // Add to local state only if not already added by real-time
+      setMessages(prev => {
+        // Prevent duplicates (same logic as real-time handler)
+        const exists = prev.some(msg => msg.id === sentMessage.id);
+        if (exists) {
+          console.log('🚫 Duplicate message from success callback prevented:', sentMessage.id);
+          return prev;
+        }
+        return [...prev, sentMessage];
+      });
       
       // Clear input
       setNewMessage('');
