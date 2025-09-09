@@ -47,29 +47,81 @@ async function main() {
     console.log(`   - ${user.username} (id: ${user.id})`)
   })
 
-  // Test creating a sample thread and message
-  const thread = await prisma.thread.create({
-    data: {
+  // Check if a thread between Alice and Bob already exists
+  const existingThread = await prisma.thread.findFirst({
+    where: {
       participants: {
-        create: [
-          { userId: users[0].id }, // alice
-          { userId: users[1].id }, // bob
-        ]
+        every: {
+          userId: {
+            in: [users[0].id, users[1].id] // alice and bob
+          }
+        }
+      },
+      AND: [
+        {
+          participants: {
+            some: { userId: users[0].id } // has alice
+          }
+        },
+        {
+          participants: {
+            some: { userId: users[1].id } // has bob
+          }
+        }
+      ]
+    },
+    include: {
+      messages: true
+    }
+  })
+
+  let thread = existingThread
+  
+  if (!existingThread) {
+    // Create thread only if it doesn't exist
+    thread = await prisma.thread.create({
+      data: {
+        participants: {
+          create: [
+            { userId: users[0].id }, // alice
+            { userId: users[1].id }, // bob
+          ]
+        }
+      },
+      include: {
+        messages: true
       }
-    }
-  })
+    })
+    console.log('✅ Created new thread between Alice & Bob')
+  } else {
+    console.log('✅ Found existing thread between Alice & Bob')
+  }
 
-  const message = await prisma.message.create({
-    data: {
+  // Only create the seeder message if it doesn't already exist
+  const existingSeederMessage = await prisma.message.findFirst({
+    where: {
       content: "Hey Bob! This is a test message from the seeder.",
-      senderId: users[0].id, // alice
-      threadId: thread.id,
+      senderId: users[0].id,
+      threadId: thread!.id
     }
   })
 
-  console.log('✅ Created sample thread and message:')
-  console.log(`   - Thread ${thread.id} with Alice & Bob`)
-  console.log(`   - Message: "${message.content}"`)
+  if (!existingSeederMessage) {
+    const message = await prisma.message.create({
+      data: {
+        content: "Hey Bob! This is a test message from the seeder.",
+        senderId: users[0].id, // alice
+        threadId: thread!.id,
+      }
+    })
+    console.log('✅ Created seeder message')
+  } else {
+    console.log('✅ Seeder message already exists')
+  }
+
+  console.log('✅ Sample thread and message ready:')
+  console.log(`   - Thread ${thread!.id} with Alice & Bob`)
+  console.log(`   - Seeder message: "Hey Bob! This is a test message from the seeder."`)
   
   console.log('🎉 Database seeded successfully!')
 }

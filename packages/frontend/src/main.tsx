@@ -16,13 +16,13 @@ const queryClient = new QueryClient({
 });
 
 // Create tRPC client
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
 const trpcClient = trpc.createClient({
   links: [
     httpBatchLink({
-      url: 'http://localhost:4000/api/trpc',
-      credentials: 'include', // Include cookies for JWT authentication
+      url: `${API_URL}/api/trpc`,
       headers() {
-        // Include token from localStorage in headers for development
+        // Include token from localStorage in headers for authentication
         const token = localStorage.getItem('auth-token');
         return token ? { authorization: `Bearer ${token}` } : {};
       },
